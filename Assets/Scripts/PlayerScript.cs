@@ -2,22 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerScript : MonoBehaviour
 {
     private Rigidbody2D rd2d;
+    public TextMeshProUGUI winText;
+    public TextMeshProUGUI loseText;
+    public TextMeshProUGUI lives;
+    public GameObject WinTextObject;
+    public GameObject LoseTextObject;
 
     public float speed;
 
-    public Text score;
+    public TextMeshProUGUI score;
 
     private int scoreValue = 0;
+
+    private int livesValue = 3;
 
     // Start is called before the first frame update
     void Start()
     {
         rd2d = GetComponent<Rigidbody2D>();
         score.text = scoreValue.ToString();
+        WinTextObject.SetActive(false);
+        LoseTextObject.SetActive(false);
+        lives.text = livesValue.ToString();
     }
 
     // Update is called once per frame
@@ -35,6 +46,43 @@ public class PlayerScript : MonoBehaviour
             scoreValue += 1;
             score.text = scoreValue.ToString();
             Destroy(collision.collider.gameObject);
+        }
+         if (collision.collider.tag == "Enemy")
+        {
+            livesValue -= 1;
+            lives.text = livesValue.ToString();
+            Destroy(collision.collider.gameObject);
+        }
+        if (scoreValue >= 8)
+        {
+            WinTextObject.SetActive(true);
+            LoseTextObject.SetActive(false);
+
+        }
+        if (livesValue == 0)
+        {
+            WinTextObject.SetActive(false);
+            LoseTextObject.SetActive(true);
+
+        }
+        
+        if (scoreValue == 4) 
+        {
+            livesValue = 3;
+            transform.position = new Vector2(26f, 1f);
+        }
+
+        if (livesValue == 0)
+        {
+            LoseTextObject.SetActive(true);
+            Destroy(gameObject);
+        }
+
+        if (scoreValue >= 8)
+        {
+            WinTextObject.SetActive(true);
+            Destroy(gameObject);
+            SoundScript.PlaySound("WinMusic");
         }
 
     }
